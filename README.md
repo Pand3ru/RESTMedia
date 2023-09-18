@@ -7,5 +7,5 @@ Goal is to achieve some kind of Twitter/Social Media API (Definetly not build fo
 - Cover more Error Cases
 - GET Req for all Posts
 - Implement Authorization Keys
-- Make Posts accsessable through their ID (Also fix dual ID's)
+- Fix Dual ID's
 
