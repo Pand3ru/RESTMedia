@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Frontent client</title>
+</head>
+
+<body>
+    <header>
+        <h1>Simple Client Simulation</h1>
+    </header>
+    <input id="inputfield"></input> <button id="send">Send Post</button>
+</body>
+<script>
+    var button = document.getElementById("send");
+    var inputField = document.getElementById("inputfield");
+    var ID = 1;
+    
+    button.addEventListener("click", function(){
+        const url = `http://localhost:8080/post/${ID}`
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+
+            },
+            body: generateJsonBody(ID, "Testuser", inputField.value)
+        })
+        .then((response) => {
+            if(!response.ok) {
+                throw new Error('Something went wrong');
+            }
+            return response.text();
+        })
+        .then((data) => {
+            console.log(data);
+            inputField.value = "";
+            ID++;
+        })
+        .catch((error) => {
+            console.error('There was a problem. Error:', error);
+        })
+    })
+    function generateJsonBody(id, user, message) 
+    {
+        const jsonData = {
+            id: id,
+            user: user,
+            message: message
+        };
+        return JSON.stringify(jsonData);
+    }
+</script>
+
+</html>
