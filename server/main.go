@@ -6,7 +6,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 type Post struct {
@@ -18,13 +19,8 @@ type Post struct {
 var Posts []Post
 
 func postHandler(w http.ResponseWriter, r *http.Request) {
-	splitURL := strings.Split(r.URL.Path, "/")
-	if len(splitURL) < 3 {
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
-		return
-	}
-
-	idString := splitURL[2]
+	vars := mux.Vars(r)
+	idString := vars["id"]
 
 	var retrievedData Post
 	if err := json.NewDecoder(r.Body).Decode(&retrievedData); err != nil {
@@ -42,7 +38,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 
 	Posts = append(Posts, retrievedData)
 
-	fmt.Fprint(w, "Post made succsessfully!\nPost:\nUser: %s\nMessage: %s", retrievedData.User, retrievedData.Message)
+	fmt.Fprintf(w, "Post made successfully!\nPost:\n\tUser: %s\n\tMessage: %s\n\tID: %d\n", retrievedData.User, retrievedData.Message, retrievedData.ID)
 
 }
 
@@ -51,9 +47,11 @@ func handleHomepage(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleReq() {
-	http.HandleFunc("/", handleHomepage)
-	http.HandleFunc("/post", postHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	r := mux.NewRouter()
+	r.HandleFunc("/", handleHomepage)
+	r.HandleFunc("/post/{id}", postHandler)
+
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
 func main() {
 	handleReq()
