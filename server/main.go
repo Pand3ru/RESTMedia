@@ -44,7 +44,16 @@ func createPostHandler(w http.ResponseWriter, r *http.Request) {
 
 		Posts = append(Posts, retrievedData) // Instead of appending Slice, a Database implementation would be prefered. Maybe achievable through another API
 
-		fmt.Fprintf(w, "Post made successfully!\nPost:\n\tUser: %s\n\tMessage: %s\n\tID: %d\n", retrievedData.User, retrievedData.Message, retrievedData.ID)
+		//fmt.Fprintf(w, "Post made successfully!\nPost:\n\tUser: %s\n\tMessage: %s\n\tID: %d\n", retrievedData.User, retrievedData.Message, retrievedData.ID)
+
+		jsonData, err := json.Marshal(retrievedData)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonData)
+
 	} else if r.Method == "GET" {
 		for i := 0; i < len(Posts); i++ {
 			if Posts[i].ID == id {
@@ -54,10 +63,6 @@ func createPostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		http.Error(w, "Post not found", http.StatusNotFound)
 	}
-}
-
-func retrievePost(w http.ResponseWriter, r *http.Request) {
-
 }
 
 // Handle Homepage

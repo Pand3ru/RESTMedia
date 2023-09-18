@@ -8,12 +8,22 @@
 <body>
     <header>
         <h1>Simple Client Simulation</h1>
+        <p>Username:</p><input id="userin"></input>
+    </br>
+</br>
     </header>
+    <p>Post:</p>
     <input id="inputfield"></input> <button id="send">Send Post</button>
+    <h2>Posts:</h2>
+    <ul id="list">
+
+    </ul>
 </body>
 <script>
     var button = document.getElementById("send");
     var inputField = document.getElementById("inputfield");
+    var list = document.getElementById("list");
+    var userin = document.getElementById("userin");
     var ID = 1;
     
     button.addEventListener("click", function(){
@@ -25,18 +35,19 @@
                 'Content-Type': 'application/json'
 
             },
-            body: generateJsonBody(ID, "Testuser", inputField.value)
+            body: generateJsonBody(ID, userin.value, inputField.value)
         })
         .then((response) => {
             if(!response.ok) {
                 throw new Error('Something went wrong');
             }
-            return response.text();
+            return response.json(); 
         })
         .then((data) => {
             console.log(data);
             inputField.value = "";
             ID++;
+            addPostToPage(data);
         })
         .catch((error) => {
             console.error('There was a problem. Error:', error);
@@ -50,6 +61,18 @@
             message: message
         };
         return JSON.stringify(jsonData);
+    }
+    function addPostToPage(data){ // Add a function that automatically fills the content when page is loaded. 
+        var newPost = document.createElement("li");
+        newPost.innerHTML = `
+        <div class="post-header">
+            <b>${data.user}</b>
+        </div>
+        <div class="post-content">
+            ${data.message}
+        </div>
+    `;
+        list.insertBefore(newPost, list.firstChild);
     }
 </script>
 
