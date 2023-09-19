@@ -5,7 +5,7 @@ Goal is to achieve some kind of Twitter/Social Media API (Definetly not build fo
 > I am a CS Student and willing to learn.
 # Todo
 - Cover more Error Cases
-- GET Req for all Posts
+- GET Req for all Posts -> Done for /post (Client implementation still missing)
 - Implement Authorization Keys
 - Fix Dual ID's
 
